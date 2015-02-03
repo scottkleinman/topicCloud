@@ -24,8 +24,8 @@ This is a simple method of generating topic clouds from [Mallet](http://mallet.c
     var width = 300;
     var height = 300;
     var magnify = 1000;
-    var wordRotation = "off"; // Keep all words horizontal
-    var fill = d3.scale.linear(); // Render in black and white
+    var wordRotation = "on"; // Allow words to rotate
+    var fill = d3.scale.category20(); // 20 colours
   ```
   
   Changing fill to d3.scale.category20() will render the cloud in colour.
