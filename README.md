@@ -1,14 +1,15 @@
 #Topic Cloud Generator
 
-This is a simple method of generating topic clouds from [Mallet](http://mallet.cs.umass.edu/index.php) topic-word-counts data based on the implementation at [https://de.dariah.eu/tatom/topic_model_visualization.html#visualizing-topic-word-associations](https://de.dariah.eu/tatom/topic_model_visualization.html#visualizing-topic-word-associations). It uses [d3.js](http://d3js.org/) and Jason Davies's [Word Cloud Layout](https://github.com/jasondavies/d3-cloud) to generate the clouds.
+This is a simple method of generating topic clouds from [Mallet](http://mallet.cs.umass.edu/index.php) word-topic-counts data based on the implementation at [https://de.dariah.eu/tatom/topic_model_visualization.html#visualizing-topic-word-associations](https://de.dariah.eu/tatom/topic_model_visualization.html#visualizing-topic-word-associations). It uses [d3.js](http://d3js.org/) and Jason Davies's [Word Cloud Layout](https://github.com/jasondavies/d3-cloud) to generate the clouds.
 
 ##Requirements:
 
+* You must have generated a word-topic-counts file from Mallet using the --word-topic-counts-file option.
 * To convert the Mallet data to JSON format: Python with numpy and os modules.
 * To display the topic clouds: An active internet connection (the webpage downloads JQuery and JQuery UI).
 
 ##Instructions:
-1. Open topicClouds.py in an editor and configure it at the top. Supply the path to the folder containing your topic-word-counts file, the name of the file itself, and the number of top words you wish to display. Save the file.
+1. Open topicClouds.py in an editor and configure it at the top. Supply the path to the folder containing your word-topic-counts file, the name of the file itself, and the number of top words you wish to display. Save the file.
 
 2. In Python, run topicClouds.py. It should output the proportions for each of the top words in the topic. It will also write the data to a JavasScript file called dataset.js in the same folder as your input file.
 
@@ -37,4 +38,4 @@ This is a simple method of generating topic clouds from [Mallet](http://mallet.c
 6. Layouts are generated on the fly and will therefore be different if the page is reloaded (even if the settings are the same). If you are happy with a particular layout, it may be worthwhile to take a screen shot to preserve the exact appearance. In some cases, you may wish to see a new layout. Clicking the Refresh button will automatically generate a new topic cloud without reloading the page.
 
 ##Bonus:
-Some users will not have generated topic-word-counts files when they ran Mallet, or they may have used the [GUI Topic Modeling Tool](https://code.google.com/p/topic-modeling-tool/), which does not output the file. However, the data can be extracted from the output_state file that is generated in both types of Mallet runs. The convert_output_state.py script will produce a topic-word-counts file from the data in the output_state file. The script requires input and output file path configurations at the beginning. **Caveat emptor**: This script is still under development and may be buggy.
+Some users will not have generated word-topic-counts files when they ran Mallet, or they may have used the [GUI Topic Modeling Tool](https://code.google.com/p/topic-modeling-tool/), which does not output the file. However, the data can be extracted from the output_state file that is generated in both types of Mallet runs. The convert_output_state.py script will produce a word-topic-counts file from the data in the output_state file. The script requires input and output file path configurations at the beginning. **Caveat emptor**: This script is still under development and may be buggy.
