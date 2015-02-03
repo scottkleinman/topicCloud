@@ -20,11 +20,13 @@ If you encounter an error in the zip function in line 50, you are probably runni
 
 It is possible to modify the size of the word cloud and the appearance of the characters. Open the topicClouds.html file in an editor and modify the configuration in lines 24-29 if necessary. Here are the defaults:
 
+```JavaScript
   var width = 300;
   var height = 300;
   var magnify = 1000;
   var wordRotation = "off"; // Keep all words horizontal
   var fill = d3.scale.linear(); // Render in black and white
+```
   
 Changing fill to d3.scale.category20() will render the cloud in colour.
 
