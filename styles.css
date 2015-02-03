@@ -1,0 +1,66 @@
+/* HTML Elements */
+h2 {
+	width: 600px;
+	text-align: center;
+	margin: auto;
+}
+select {
+	width: 150px;
+}
+
+/* div Elements */
+#wrap {
+	width: 85%;
+	margin: 25px auto;
+	border: 1px dashed #000000;
+}
+#title {
+	margin-top: 25px;
+	font-family: Verdana,Arial,sans-serif;
+}
+#header {
+	background: #cccccc;
+	padding: 5px;
+	height: 42px;
+}
+#container1 {
+	float: left;
+	margin: 0 5px 0 0;
+}
+#container2 {
+	float: left;
+	margin: 0 0 0 5px;
+}
+#container3 {
+	float: right;
+	margin: 0 0 0 5px;
+}
+#chooseTopic {
+	font-size: 150%;
+}
+#reload {
+	font-size: 150%;
+	width: 40px;
+	height: 40px;
+	/*margin-top: 4px;*/
+}
+#modal {
+	font-size: 150%;
+	width: 40px;
+	height: 40px;
+	/*margin-top: 4px;*/
+}
+#settings p {
+	margin: 10px 4px;
+}
+#colorScale {
+	width: 350px;
+}
+
+/* Classes */
+.overflow {
+	height: 200px;
+}
+.ui-icon {
+        zoom: 1.5;
+}

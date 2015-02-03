@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+
+<head>
+  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+  <script src="lib/d3.js"></script>
+  <script src="d3.layout.cloud.js"></script>
+  <script src="dataset.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div id="title"></div>
+  <div id="wrap">
+    <div id="header">
+      <div id="container1">
+        <select id="chooseTopic"></select>
+      </div>
+      <div id="container2">
+        <button id="reload"></button>
+      </div>
+      <div id="container3">
+        <button id="modal"></button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function go(topicNum, menu) {
+      // Configuration
+      var title = "Your Title Here";
+      var dim = 300;
+      var width = dim;
+      var height = dim;
+      var magnify = 1000;
+      var wordRotation = "on"; // Keep all words horizontal
+      //var fill = d3.scale.linear(); // Render in black and white
+      var fill = d3.scale.category20(); // Render in colour  
+      // End of Configuration
+	  
+	  // Set the configured value for the colour scale menu
+	  menuSet = String(fill);
+	  $("#colorScale select").val(menuSet);
+	  
+	  // Override configuration with settings options
+	  if ($("#settingOpts").prop('checked')) {
+		if ($("#modelTitle").val() != "") {
+			var title = $("#modelTitle").val();
+		}
+		var width = $("#width").val();
+		var height = $("#height").val();
+		var magnify = $("#magnification").val();
+		if ($("#rotation").prop('checked')) {
+			var wordRotation = "on";
+		}
+		else {
+			var wordRotation = "off";
+		}
+		var fill = eval($("#colorScale").val());
+	  }
+	  
+      // Centre the topic title based on width
+      $("#wrap").css("width", width);
+      $("h2").css("width", width);
+      $("#title").html("<h2>" + title + "</h2>");
+
+      // Populate the select menu based on number of topics
+      if (menu != "true") {
+        for (n = 0; n < dataSet.length; n++) {
+          $("#chooseTopic").append($('<option/>').val(n).text("Topic " + n));
+        }
+        $("#chooseTopic").val(topicNum);
+        $("#chooseTopic")
+          .selectmenu({
+            change: function(e, object) {
+              val = $("#chooseTopic").val();
+              $("#topicTitle").html("Topic " + val);
+              $("svg").remove();
+              go(val, "true");
+            }
+          })
+          .selectmenu("menuWidget")
+          .addClass("overflow");
+      } else {
+        $("#chooseTopic").val(topicNum);
+      }
+
+      // Determine the current topic data
+      data = dataSet[topicNum]['children'];
+
+      // In case you want to inspect the data in the console
+      //console.log(data);
+
+      d3.layout.cloud().size([width, height])
+        .words(data.map(function(d) {
+          s = d.size;
+          s = s * magnify;
+          return {
+            text: d.text,
+            size: s
+          };
+        }))
+        .padding(5)
+        .rotate(function() {
+          return ~~(Math.random() * 2) * 90;
+        })
+        .font("Impact")
+        .fontSize(function(d) {
+          return d.size;
+        })
+        .on("end", draw)
+        .start();
+
+      function draw(words) {
+        d3.select("#wrap").append("svg")
+          .attr("id", "cloud")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .selectAll("text")
+          .data(words)
+          .enter().append("text")
+          .style("font-size", function(d) {
+            return d.size + "px";
+          })
+          .style("font-family", "Impact")
+          .style("fill", function(d, i) {
+            return fill(i);
+          })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            var rotate = (wordRotation == "off") ? 0 : d.rotate;
+            return "translate(" + [d.x, d.y] + ")rotate(" + rotate + ")";
+          })
+          .text(function(d) {
+            return d.text;
+          })
+          .append("svg:title").text(function(d) {
+            percent = d.size / 10;
+            return percent + "%";
+          });
+      }
+    }
+
+    $(document).ready(function() {
+      go(0);
+      $("#reload").button({
+        icons: {
+          primary: "ui-icon-refresh"
+        },
+        text: false
+      });
+      $("#reload").click(function() {
+        val = $("#chooseTopic").val();
+        $("#topicTitle").html("Topic " + val);
+        $("svg").remove();
+        go(val, "true");
+      });
+	  $("#reload").attr("title", "Refresh Topic Cloud");
+      $("#modal").button({
+        icons: {
+          primary: "ui-icon-gear"
+        },
+        text: false
+      });
+	  $("#modal").attr("title", "Settings");
+	  modal = $( "#settings" ).dialog({
+		autoOpen: false,
+		height: 500,
+		width: 500,
+		modal: true,
+		buttons: {
+			"Save Settings": function() {
+				// Insert config update function here
+				$("#settingOpts").prop('checked', true);;
+				modal.dialog( "close" );
+				val = $("#chooseTopic").val();
+				$("#topicTitle").html("Topic " + val);
+				$("svg").remove();
+				go(val, "true");
+			}
+		}
+	  });
+	  $( "#modal" ).button().on("click", function() {
+		modal.dialog("open");
+	  });
+	  
+	$( "#height" ).spinner({
+		min: 100,
+		max: 1000,
+		step: 10,
+		start: 300,
+		spin: function (e, ui) {
+			if ($("#lockAspect").prop('checked')) {
+				$("#width").spinner( "value", ui.value );
+			}
+		}
+	});
+	$( "#width" ).spinner({
+		min: 100,
+		max: 1000,
+		step: 10,
+		start: 300,
+		spin: function (e, ui) {
+			if ($("#lockAspect").prop('checked')) {
+				$("#height").spinner( "value", ui.value );
+			}
+		}
+	});
+	$( "#magnification" ).spinner({
+      min: 100,
+      max: 10000,
+      step: 10,
+      start: 1000
+	});
+	
+	$("#colourScale").button({
+        icons: {
+          primary: "ui-icon-help"
+        },
+        text: false
+      });
+    });
+  </script>
+  <div id="settings" title="Settings">
+	<p><label for="modelTitle">Title</label> <input id="modelTitle" type="text" size="30"/></p>
+	<p><label for="height">Height</label> <input id="height" type="text" size="2" value="300"/> <label for="width">Width</label> <input id="width" type="text" size="2" value="300"/> <input type="checkbox" id="lockAspect" checked=checked"/> <label for="lockAspect">Same for Both</label></p>
+	<p><label for="magnification">Magnification</label> <input id="magnification" type="text" size="3" value="1000"/></p>
+	<p><label for="rotation">Word Rotation</label> <input name="rotation" id="rotation" type="radio" checked/> On <input name="rotation" type="radio"/> Off</p>
+	<p><label for="colorScale">Select Colour Scale <a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales#categorical-colors" target="_blank"><button id="colourScale"></button></a></label><br/><br/>
+	<select id="colorScale">
+		<option value="d3.scale.linear()">d3.scale.linear (Black &amp; White)</option>
+		<option value="d3.scale.category10()">d3.scale.category10 (10 Colours)</option>
+		<option value="d3.scale.category20()" selected="selected">d3.scale.category20 (20 Colours)</option>
+		<option value="d3.scale.category20b()">d3.scale.category20b (20 Colours)</option>
+		<option value="d3.scale.category20c()">d3.scale.category20c (20 Colours)</option>
+	</select>
+	</p>
+	<input id="settingOpts" type="radio" style="display:none;"/>
+  </div>
+</body>
+
+</html>
